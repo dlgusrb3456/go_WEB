@@ -1,9 +1,11 @@
 package myapp
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -73,4 +75,38 @@ func TestBarPathHandler_withname(t *testing.T) {
 	data, _ := ioutil.ReadAll(res.Body) //Body는 Buffer값이라 바로 읽어올 수 없음. 그래서 ioutil을 이용해 버퍼의 내용을 전부 읽어와 data에 저장할 것임
 	assert.Equal("hello asdf!", string(data), "data failed")
 
+}
+
+func TestFooHandler_WithoutJson(t *testing.T) {
+	assert := assert.New(t)
+
+	res := httptest.NewRecorder()
+	req := httptest.NewRequest("GET", "/foo", nil) // => 이렇게 보내면 오류남. Json을 안보내면 foohandler에서 statusbad를 header에 추가해서 response 하게 됨
+
+	mux := NewHttpHandler()
+	mux.ServeHTTP(res, req)
+
+	assert.Equal(http.StatusBadRequest, res.Code, "Foo Failed!!")
+}
+
+// Json 테스팅
+func TestFooHandler_WithJson(t *testing.T) {
+	assert := assert.New(t)
+
+	res := httptest.NewRecorder()
+	req := httptest.NewRequest("POST", "/foo",
+		strings.NewReader(`{"first_name":"Lee","last_name":"hg","email":"dlgusrb@naver.com"}`))
+
+	//strings.NewReader를 통해 이 string이 ioReader로 바뀜
+	mux := NewHttpHandler()
+	mux.ServeHTTP(res, req)
+
+	assert.Equal(http.StatusCreated, res.Code, "Foo Failed!!")
+
+	user := new(User)
+	err := json.NewDecoder(res.Body).Decode(user) //response body를 decode해서 user에 넣기
+
+	assert.Nil(err)
+	assert.Equal("Lee", user.FirstName)
+	assert.Equal("hg", user.LastName)
 }
