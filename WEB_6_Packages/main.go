@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/pat"
-	"github.com/unrolled/render"
 	"github.com/urfave/negroni"
 )
 
