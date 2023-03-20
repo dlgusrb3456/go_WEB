@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"go_WEB/My_TodoList/model"
 	"net/http"
 	"strconv"
 	"time"
@@ -13,22 +14,13 @@ import (
 var rd *render.Render
 var count int
 
-type Todo struct {
-	ID        int       `json:"id`
-	Name      string    `json:"name"`
-	Completed bool      `json:"completed"`
-	CreatedAt time.Time `json:"created_at`
-}
-
-var TodoMap map[int]*Todo
-
 func redirectToMain(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "http://localhost:3000/todo.html", http.StatusTemporaryRedirect)
 }
 
 func getTodoList(w http.ResponseWriter, r *http.Request) {
-	list := []*Todo{}
-	for _, v := range TodoMap {
+	list := []*model.Todo{}
+	for _, v := range model.TodoMap {
 		list = append(list, v)
 	}
 	rd.JSON(w, http.StatusOK, list)
@@ -36,11 +28,11 @@ func getTodoList(w http.ResponseWriter, r *http.Request) {
 
 func postTodoList(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name") //input_box로부터 받아온 내용
-	tempTodo := &Todo{ID: count, Name: name, Completed: false, CreatedAt: time.Now()}
+	tempTodo := &model.Todo{ID: count, Name: name, Completed: false, CreatedAt: time.Now()}
 
-	TodoMap[count] = tempTodo
+	model.TodoMap[count] = tempTodo
 	count += 1
-	rd.JSON(w, http.StatusOK, tempTodo)
+	rd.JSON(w, http.StatusCreated, tempTodo)
 }
 
 type Success struct {
@@ -51,11 +43,11 @@ func deleteTodoList(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
-	_, ok := TodoMap[id]
+	_, ok := model.TodoMap[id]
 	if !ok {
 		rd.JSON(w, http.StatusOK, Success{false})
 	} else {
-		delete(TodoMap, id)
+		delete(model.TodoMap, id)
 		rd.JSON(w, http.StatusOK, Success{true})
 
 	}
@@ -74,13 +66,13 @@ func completeTodoList(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	_, ok := TodoMap[id]
+	_, ok := model.TodoMap[id]
 	if ok {
-		if TodoMap[id].Completed {
-			TodoMap[id].Completed = false
+		if model.TodoMap[id].Completed {
+			model.TodoMap[id].Completed = false
 			rd.JSON(w, http.StatusOK, Complete{true, false})
 		} else {
-			TodoMap[id].Completed = true
+			model.TodoMap[id].Completed = true
 			rd.JSON(w, http.StatusOK, Complete{true, true})
 		}
 
@@ -96,7 +88,7 @@ func getInfoList(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	v, ok := TodoMap[id]
+	v, ok := model.TodoMap[id]
 	if ok {
 		fmt.Println(&v)
 		rd.JSON(w, http.StatusOK, &v)
@@ -104,7 +96,7 @@ func getInfoList(w http.ResponseWriter, r *http.Request) {
 }
 
 func NewRouter() http.Handler {
-	TodoMap = make(map[int]*Todo)
+	model.TodoMap = make(map[int]*model.Todo)
 	rd = render.New()
 
 	mux := mux.NewRouter()
