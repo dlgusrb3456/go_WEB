@@ -21,31 +21,28 @@
         console.log(item)
         if (item.completed){
             todoListItem.append("<li class='completed'"+ " id='" + item.ID + "'><div class='form-check'><label class='form-check-label'><input class='checkbox' type='checkbox' checked='checked'/>" + item.name + "<i class='input-helper'></i></label></div><i class='remove mdi mdi-close-circle-outline'></i></li>");    
-        }
-        else{
+        }else{
             todoListItem.append("<li "+ " id='" + item.ID + "'><div class='form-check'><label class='form-check-label'><input class='checkbox' type='checkbox' />" + item.name + "<i class='input-helper'></i></label></div><i class='remove mdi mdi-close-circle-outline'></i></li>");
         }
         todoListInput.val("");
-    }
+    };
 
     $.get("/TodoList",function(items){
         items.forEach(element => {
             addItem(element)
         });
-    })
-
-
+    });
 
     todoListItem.on('change', '.checkbox', function() {
-        var id = $(self).closest("li").attr('id')
+        var id = $(this).closest("li").attr('id');
+        console.log(id);
         var $self = $(this);
-        
         var complete = true;
-        if ($(self).attr('checked')){
-            complete = false
+        if ($(this).attr('checked')) {
+            complete = false;
         }
-        $.get("complete-todo/"+id, function(data){
 
+        $.get("complete-todo/"+id, function(data){
             if (data.success == true){
                 if (data.complition == true){
                     $(self).removeAttr('checked');
@@ -53,20 +50,12 @@
                     $(self).attr('checked', 'checked');
                 }
             }
-
-            // if ($(self).attr('checked')) {
-            //     $(self).removeAttr('checked');
-            // } else {
-            //     $(self).attr('checked', 'checked');
-            // }
-            
-            $(self).closest("li").toggleClass('completed');
+            $self.closest("li").toggleClass('completed');
         })
-        
-        
 
-        
-        
+        $.get("getInfoList/"+id, function(data){
+            console.log(data.name,data.completed)
+        })
     });
         
 
@@ -79,12 +68,10 @@
                 success: function(data){ //응답
                     if(data.success){
                         $self.parent().remove();
-                    }else{
-                        console.log("fail to delete")
-                    }
+                    };
                 }
             })
         });
         
     });
-})(jQuery);
+    })(jQuery);

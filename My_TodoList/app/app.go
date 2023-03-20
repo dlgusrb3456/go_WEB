@@ -49,18 +49,13 @@ type Success struct {
 
 func deleteTodoList(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(id)
-	v, ok := TodoMap[id]
+	id, _ := strconv.Atoi(vars["id"])
+
+	_, ok := TodoMap[id]
 	if !ok {
-		fmt.Println("iii", v)
 		rd.JSON(w, http.StatusOK, Success{false})
 	} else {
 		delete(TodoMap, id)
-		fmt.Println("aaa", v)
 		rd.JSON(w, http.StatusOK, Success{true})
 
 	}
@@ -74,9 +69,13 @@ type Complete struct {
 
 func completeTodoList(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
+	id, err := strconv.Atoi(vars["id"])
+	fmt.Println(id)
+	if err != nil {
+		fmt.Println(err)
+	}
 	_, ok := TodoMap[id]
-	if !ok {
+	if ok {
 		if TodoMap[id].Completed {
 			TodoMap[id].Completed = false
 			rd.JSON(w, http.StatusOK, Complete{true, false})
@@ -90,6 +89,20 @@ func completeTodoList(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getInfoList(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	fmt.Println(id)
+	if err != nil {
+		fmt.Println(err)
+	}
+	v, ok := TodoMap[id]
+	if ok {
+		fmt.Println(&v)
+		rd.JSON(w, http.StatusOK, &v)
+	}
+}
+
 func NewRouter() http.Handler {
 	TodoMap = make(map[int]*Todo)
 	rd = render.New()
@@ -100,6 +113,7 @@ func NewRouter() http.Handler {
 	mux.HandleFunc("/TodoList", postTodoList).Methods("POST")
 	mux.HandleFunc("/TodoList/{id:[0-9]+}", deleteTodoList).Methods("DELETE")
 	mux.HandleFunc("/complete-todo/{id:[0-9]+}", completeTodoList).Methods("GET")
+	mux.HandleFunc("/getInfoList/{id:[0-9]+}", getInfoList).Methods("GET")
 
 	return mux
 }
