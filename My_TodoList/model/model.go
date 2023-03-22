@@ -9,12 +9,13 @@ type Todo struct {
 	CreatedAt time.Time `json:"created_at`
 }
 
-type dbHandler interface {
-	getTodos() []*Todo
-	addTodo(name string) *Todo
-	deleteTodo(id int) bool
-	completeTodo(id int) int
-	getInfo(id int) (*Todo, bool)
+type DBHandler interface {
+	GetTodos() []*Todo
+	AddTodo(name string) *Todo
+	DeleteTodo(id int) bool
+	CompleteTodo(id int) int
+	GetInfo(id int) (*Todo, bool)
+	CloseDB()
 }
 
 type memoryHandler struct {
@@ -22,32 +23,40 @@ type memoryHandler struct {
 	Count   int
 }
 
-var handler dbHandler
-
-func init() {
-	//handler = newMemoryHandler()
-	handler = newSqliteHandler()
+func NewDBHandler() DBHandler {
+	return newSqliteHandler()
 }
 
-func GetTodos() []*Todo {
-	return handler.getTodos()
-}
+// func init() {
+// 	//handler = newMemoryHandler()
+// 	handler = newSqliteHandler()
+// }
 
-func AddTodo(name string) *Todo {
-	return handler.addTodo(name)
-}
+// func GetTodos() []*Todo {
+// 	return handler.getTodos()
+// }
 
-func DeleteTodo(id int) bool {
-	return handler.deleteTodo(id)
-}
+// func AddTodo(name string) *Todo {
+// 	return handler.addTodo(name)
+// }
 
-func CompleteTodo(id int) int {
-	return handler.completeTodo(id)
-}
+// func DeleteTodo(id int) bool {
+// 	return handler.deleteTodo(id)
+// }
 
-func GetInfo(id int) (*Todo, bool) {
-	return handler.getInfo(id)
-}
+// func CompleteTodo(id int) int {
+// 	return handler.completeTodo(id)
+// }
+
+// func GetInfo(id int) (*Todo, bool) {
+// 	return handler.getInfo(id)
+// }
+
+// func Close() {
+// 	handler.closeDB()
+// }
+
+// -----------------------------------------
 
 // func GetTodos() []*Todo {
 // 	list := []*Todo{}

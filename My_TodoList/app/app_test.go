@@ -15,13 +15,16 @@ import (
 
 func TestTodos(t *testing.T) {
 	assert := assert.New(t)
+	ah := NewRouter()
+	defer ah.Close()
 
-	ts := httptest.NewServer(NewRouter())
+	ts := httptest.NewServer(ah)
 	defer ts.Close()
 
 	resp, err := http.PostForm(ts.URL+"/TodoList", url.Values{"name": {"take a walk"}})
 	assert.NoError(err)
 	assert.Equal(http.StatusCreated, resp.StatusCode)
+
 	var todo model.Todo
 	err = json.NewDecoder(resp.Body).Decode(&todo)
 	assert.NoError(err)
