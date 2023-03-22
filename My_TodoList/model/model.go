@@ -9,62 +9,94 @@ type Todo struct {
 	CreatedAt time.Time `json:"created_at`
 }
 
-var TodoMap map[int]*Todo
+type dbHandler interface {
+	getTodos() []*Todo
+	addTodo(name string) *Todo
+	deleteTodo(id int) bool
+	completeTodo(id int) int
+	getInfo(id int) (*Todo, bool)
+}
+
+type memoryHandler struct {
+	TodoMap map[int]*Todo
+	Count   int
+}
+
+var handler dbHandler
 
 func init() {
-	TodoMap = make(map[int]*Todo)
+	//handler = newMemoryHandler()
+	handler = newSqliteHandler()
 }
 
 func GetTodos() []*Todo {
-	list := []*Todo{}
-	for _, v := range TodoMap {
-		list = append(list, v)
-	}
-	return list
+	return handler.getTodos()
 }
 
-var count int = 0
-
 func AddTodo(name string) *Todo {
-	tempTodo := &Todo{Name: name, ID: count, Completed: false}
-	TodoMap[count] = tempTodo
-	count += 1
-	return tempTodo
+	return handler.addTodo(name)
 }
 
 func DeleteTodo(id int) bool {
-	_, ok := TodoMap[id]
-	if ok {
-		delete(TodoMap, id)
-		return true
-	} else {
-		return false
-	}
+	return handler.deleteTodo(id)
 }
 
-func CompleteTodo(id int) int { // 1 : true to false 2: false to true 3: non-exist
-	v, ok := TodoMap[id]
-	if ok {
-		complition := v.Completed
-		if complition == true {
-			v.Completed = false
-			return 1
-		} else {
-			v.Completed = true
-			return 2
-		}
-	} else {
-		return 3
-	}
-
-	return 1
+func CompleteTodo(id int) int {
+	return handler.completeTodo(id)
 }
 
 func GetInfo(id int) (*Todo, bool) {
-	v, ok := TodoMap[id]
-	if ok {
-		return v, true
-	} else {
-		return nil, false
-	}
+	return handler.getInfo(id)
 }
+
+// func GetTodos() []*Todo {
+// 	list := []*Todo{}
+// 	for _, v := range TodoMap {
+// 		list = append(list, v)
+// 	}
+// 	return list
+// }
+
+// func AddTodo(name string) *Todo {
+// 	tempTodo := &Todo{Name: name, ID: count, Completed: false}
+// 	TodoMap[count] = tempTodo
+// 	count += 1
+// 	return tempTodo
+// }
+
+// func DeleteTodo(id int) bool {
+// 	_, ok := TodoMap[id]
+// 	if ok {
+// 		delete(TodoMap, id)
+// 		return true
+// 	} else {
+// 		return false
+// 	}
+// }
+
+// func CompleteTodo(id int) int { // 1 : true to false 2: false to true 3: non-exist
+// 	v, ok := TodoMap[id]
+// 	if ok {
+// 		complition := v.Completed
+// 		if complition == true {
+// 			v.Completed = false
+// 			return 1
+// 		} else {
+// 			v.Completed = true
+// 			return 2
+// 		}
+// 	} else {
+// 		return 3
+// 	}
+
+// 	return 1
+// }
+
+// func GetInfo(id int) (*Todo, bool) {
+// 	v, ok := TodoMap[id]
+// 	if ok {
+// 		return v, true
+// 	} else {
+// 		return nil, false
+// 	}
+// }
