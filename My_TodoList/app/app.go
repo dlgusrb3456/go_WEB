@@ -3,18 +3,41 @@ package app
 import (
 	"fmt"
 	"go_WEB/My_TodoList/model"
+	"go_WEB/WEB_UUID"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"github.com/unrolled/render"
+	"github.com/urfave/negroni"
 )
 
 var rd *render.Render = render.New()
+var SESSION_KEY string = WEB_UUID.GetUUID()
+
+// var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+var store = sessions.NewCookieStore([]byte(SESSION_KEY))
 
 type AppHandler struct {
 	http.Handler //embedded : http.Handler를 AppHandler가 포함하고 있다. has-a 관계임
 	dbHandler    model.DBHandler
+}
+
+func getSessionID(r *http.Request) string {
+	session, errs := store.Get(r, "session")
+	if errs != nil {
+		return ""
+	}
+
+	val := session.Values["id"]
+	if val == nil {
+		return ""
+	} else {
+		return val.(string) //https://stackoverflow.com/questions/27137521/how-to-convert-interface-to-string
+		//type assertion이 필요함
+	}
 }
 
 func (a *AppHandler) redirectToMain(w http.ResponseWriter, r *http.Request) {
@@ -120,16 +143,41 @@ func (a *AppHandler) Close() {
 	a.dbHandler.CloseDB()
 }
 
+func CheckSignin(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	//if user request url is signin.html, then next()
+	if strings.Contains(r.URL.Path, "/signin.html") || strings.Contains(r.URL.Path, "/auth") {
+		next(w, r)
+		return
+	}
+
+	// if user already signed in
+	sessionID := getSessionID(r)
+	if sessionID != "" {
+		next(w, r)
+		return
+	}
+	http.Redirect(w, r, "/signin.html", http.StatusTemporaryRedirect)
+	// if user non already signed in
+	// redirect "signin.html"
+}
+
 func NewRouter(filepath string) *AppHandler { //main으로 AppHandler를 넘김
 	// model.TodoMap = make(map[int]*model.Todo)
-	fmt.Println("it's work 1")
+	fmt.Println(ClientID_google)
+	fmt.Println(ClientPW_google)
 	r := mux.NewRouter()
-	fmt.Println("it's work 2")
+
+	//n := negroni.Classic() //기본적인 기능을 많이 넣어줌. 파일서버, 로그, recovery 등등..
+	n := negroni.New(negroni.NewRecovery(), negroni.NewLogger(), negroni.HandlerFunc(CheckSignin), negroni.NewStatic(http.Dir("public")))
+	n.UseHandler(r)
+
 	a := &AppHandler{}
-	a.Handler = r
-	fmt.Println("it's work 3")
+	a.Handler = n
 	a.dbHandler = model.NewDBHandler(filepath)
-	fmt.Println("it's work 6")
+
+	fmt.Println(SESSION_KEY)
+	r.HandleFunc("/auth/google/login", googleLoginHandler)
+	r.HandleFunc("/auth/google/callback", googleAuthCallback)
 
 	r.HandleFunc("/", a.redirectToMain)
 	r.HandleFunc("/TodoList", a.getTodoList).Methods("GET")
