@@ -15,6 +15,13 @@ import (
 )
 
 func TestTodos(t *testing.T) {
+	//로그인이 된 후에 다음 테스트 코드가 수행되므로 로그인을 수행해야함.
+	//로그인이 됐는지 여부를 확인하는 app.go의 getSessionId()를 func()포인터를 가지는 variable로 만들어서 문제를 해결한다.
+	getSessionID = func(r *http.Request) string {
+		return "testsessionId"
+	}
+	// function variable이기 때문에 값을 변경할 수 있음
+
 	os.Remove("./test.db")
 	assert := assert.New(t)
 	ah := NewRouter("./test.db")

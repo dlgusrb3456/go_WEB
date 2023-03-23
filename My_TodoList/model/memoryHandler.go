@@ -1,6 +1,6 @@
 package model
 
-func (m *memoryHandler) AddTodo(name string) *Todo {
+func (m *memoryHandler) AddTodo(name string, sessionId string) *Todo {
 	tempTodo := &Todo{Name: name, ID: m.Count, Completed: false}
 	m.TodoMap[m.Count] = tempTodo
 	m.Count += 1
@@ -50,7 +50,7 @@ func newMemoryHandler() DBHandler {
 	return m
 }
 
-func (m *memoryHandler) GetTodos() []*Todo {
+func (m *memoryHandler) GetTodos(sessionId string) []*Todo {
 	list := []*Todo{}
 	for _, v := range m.TodoMap {
 		list = append(list, v)

@@ -10,8 +10,8 @@ type Todo struct {
 }
 
 type DBHandler interface {
-	GetTodos() []*Todo
-	AddTodo(name string) *Todo
+	GetTodos(sessionId string) []*Todo
+	AddTodo(name string, sessionId string) *Todo
 	DeleteTodo(id int) bool
 	CompleteTodo(id int) int
 	GetInfo(id int) (*Todo, bool)

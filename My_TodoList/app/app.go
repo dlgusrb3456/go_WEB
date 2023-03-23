@@ -25,7 +25,7 @@ type AppHandler struct {
 	dbHandler    model.DBHandler
 }
 
-func getSessionID(r *http.Request) string {
+var getSessionID = func(r *http.Request) string {
 	session, errs := store.Get(r, "session")
 	if errs != nil {
 		return ""
@@ -49,13 +49,15 @@ func (a *AppHandler) getTodoList(w http.ResponseWriter, r *http.Request) {
 	// for _, v := range model.TodoMap {
 	// 	list = append(list, v)
 	// }
-	list := a.dbHandler.GetTodos()
+	sessionId := getSessionID(r)
+	list := a.dbHandler.GetTodos(sessionId)
 	rd.JSON(w, http.StatusOK, list)
 }
 
 func (a *AppHandler) postTodoList(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name") //input_box로부터 받아온 내용
-	tempTodo := a.dbHandler.AddTodo(name)
+	sessionId := getSessionID(r)
+	tempTodo := a.dbHandler.AddTodo(name, sessionId)
 	// tempTodo := &model.Todo{ID: count, Name: name, Completed: false, CreatedAt: time.Now()}
 
 	// model.TodoMap[count] = tempTodo
@@ -145,10 +147,10 @@ func (a *AppHandler) Close() {
 
 func CheckSignin(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	//if user request url is signin.html, then next()
-	if strings.Contains(r.URL.Path, "/signin.html") || strings.Contains(r.URL.Path, "/auth") {
+	if strings.Contains(r.URL.Path, "/signin") || strings.Contains(r.URL.Path, "/auth") {
 		next(w, r)
 		return
-	}
+	} // strings.Contains(r.URL.Path, "/signin") => signin.css가 적용이 되지 않는 문제가 있었는데 여기서 걸려서 제대로 load되지 않았던 것임
 
 	// if user already signed in
 	sessionID := getSessionID(r)
