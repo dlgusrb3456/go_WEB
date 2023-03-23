@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
 	"strconv"
 	"testing"
 
@@ -14,8 +15,9 @@ import (
 )
 
 func TestTodos(t *testing.T) {
+	os.Remove("./test.db")
 	assert := assert.New(t)
-	ah := NewRouter()
+	ah := NewRouter("./test.db")
 	defer ah.Close()
 
 	ts := httptest.NewServer(ah)

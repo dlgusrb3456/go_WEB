@@ -120,7 +120,7 @@ func (a *AppHandler) Close() {
 	a.dbHandler.CloseDB()
 }
 
-func NewRouter() *AppHandler { //main으로 AppHandler를 넘김
+func NewRouter(filepath string) *AppHandler { //main으로 AppHandler를 넘김
 	// model.TodoMap = make(map[int]*model.Todo)
 	fmt.Println("it's work 1")
 	r := mux.NewRouter()
@@ -128,7 +128,7 @@ func NewRouter() *AppHandler { //main으로 AppHandler를 넘김
 	a := &AppHandler{}
 	a.Handler = r
 	fmt.Println("it's work 3")
-	a.dbHandler = model.NewDBHandler()
+	a.dbHandler = model.NewDBHandler(filepath)
 	fmt.Println("it's work 6")
 
 	r.HandleFunc("/", a.redirectToMain)
