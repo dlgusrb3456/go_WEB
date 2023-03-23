@@ -25,7 +25,7 @@ type AppHandler struct {
 	dbHandler    model.DBHandler
 }
 
-var getSessionID = func(r *http.Request) string {
+var getSessionID = func(r *http.Request) string { //func var로 만들어 test에서 dummy로 사용할 수 있게 변경
 	session, errs := store.Get(r, "session")
 	if errs != nil {
 		return ""
@@ -171,13 +171,14 @@ func NewRouter(filepath string) *AppHandler { //main으로 AppHandler를 넘김
 
 	//n := negroni.Classic() //기본적인 기능을 많이 넣어줌. 파일서버, 로그, recovery 등등..
 	n := negroni.New(negroni.NewRecovery(), negroni.NewLogger(), negroni.HandlerFunc(CheckSignin), negroni.NewStatic(http.Dir("public")))
+	//Classic() 내부의 함수들 사이에 우리가 만들어준 CheckSignin 기능을 넣어 매 요청마다 해당 기능이 수행되게 함. Decorator 패턴이므로 chain처럼 이어짐.
+
 	n.UseHandler(r)
 
 	a := &AppHandler{}
 	a.Handler = n
 	a.dbHandler = model.NewDBHandler(filepath)
 
-	fmt.Println(SESSION_KEY)
 	r.HandleFunc("/auth/google/login", googleLoginHandler)
 	r.HandleFunc("/auth/google/callback", googleAuthCallback)
 

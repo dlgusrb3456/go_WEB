@@ -128,8 +128,6 @@ func newSqliteHandler(filepath string) DBHandler {
 	if errs != nil {
 		panic(errs)
 	}
-	fmt.Println("it's work 8")
 	statement.Exec()
-	fmt.Println("it's work 9")
 	return &sqliteHandler{db: database}
 }
