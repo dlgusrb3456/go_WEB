@@ -3,10 +3,13 @@ package app
 import (
 	"fmt"
 	"go_WEB/My_TodoList/model"
-	"go_WEB/WEB_UUID"
+
+	//"go_WEB/WEB_UUID"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/dlgusrb3456/get_UUID"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -15,7 +18,7 @@ import (
 )
 
 var rd *render.Render = render.New()
-var SESSION_KEY string = WEB_UUID.GetUUID()
+var SESSION_KEY string = get_UUID.GetUUID()
 
 // var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 var store = sessions.NewCookieStore([]byte(SESSION_KEY))

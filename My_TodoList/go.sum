@@ -1,6 +1,8 @@
 cloud.google.com/go/compute/metadata v0.2.0 h1:nBbNSZyDpkNlo3DepaaLKVuO7ClyifSAmNloSCZrHnQ=
 cloud.google.com/go/compute/metadata v0.2.0/go.mod h1:zFmK7XCadkQkj6TtorcaGlCW1hT1fIilQDwofLpJ20k=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
+github.com/dlgusrb3456/get_UUID v0.0.0-20230326055157-b26045e76c9c h1:h815Q9w2ldhzFSpY5VLJ6uzBbG4dlBdpVtICya6v14E=
+github.com/dlgusrb3456/get_UUID v0.0.0-20230326055157-b26045e76c9c/go.mod h1:phB4iH8+oilFNpxqFasOzGzwcAcRYG4AUrXwIJXRVMQ=
 github.com/fsnotify/fsnotify v1.6.0 h1:n+5WquG0fcWoWp6xPWfHdbskMCQaFnG6PfBrh1Ky4HY=
 github.com/fsnotify/fsnotify v1.6.0/go.mod h1:sl3t1tCWJFWoRz9R8WJCbQihKKwmorjAbSClcnxKAGw=
 github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
