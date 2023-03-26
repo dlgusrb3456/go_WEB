@@ -6,7 +6,7 @@ require go_WEB/My_TodoList/app v0.0.0-00010101000000-000000000000
 
 require (
 	cloud.google.com/go/compute/metadata v0.2.0 // indirect
-	github.com/dlgusrb3456/get_UUID v0.0.0-20230326055157-b26045e76c9c // indirect
+	github.com/dlgusrb3456/get_UUID v0.0.0-20230326055853-842fc86a4ca9 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect

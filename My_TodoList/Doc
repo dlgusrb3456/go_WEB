@@ -1,0 +1,7 @@
+How to run ToDo-list in Docker Container
+
+docker run -p 3000:3000 -d [name:tag]
+
+or
+
+docker run -p 3000:3000 -it [name:tag]
