@@ -23,8 +23,9 @@ type memoryHandler struct {
 	Count   int
 }
 
-func NewDBHandler(filepath string) DBHandler {
-	return newSqliteHandler(filepath)
+func NewDBHandler(dbConn string) DBHandler {
+	//return newSqliteHandler(filepath)
+	return newPQHandler(dbConn)
 }
 
 // func init() {

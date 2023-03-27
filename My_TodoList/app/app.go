@@ -148,6 +148,10 @@ func (a *AppHandler) Close() {
 	a.dbHandler.CloseDB()
 }
 
+func GetDBUrl() string {
+	return DATABASE_URL
+}
+
 func CheckSignin(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	//if user request url is signin.html, then next()
 	if strings.Contains(r.URL.Path, "/signin") || strings.Contains(r.URL.Path, "/auth") {
