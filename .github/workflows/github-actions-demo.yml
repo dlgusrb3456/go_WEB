@@ -29,6 +29,7 @@ jobs:
       working-directory: ./My_TodoList/app
       run : |
         go version
+        go get .
         go get -u github.com/dlgusrb3456/get_UUID
         go get -u github.com/gorilla/mux
         go get -u github.com/gorilla/sessions
@@ -37,7 +38,11 @@ jobs:
         go get -u go_WEB/My_TodoList/model
         go get -u golang.org/x/oauth2
         go get -u golang.org/x/oauth2/google
+      env:
+        GOPATH: /home/runner/work/Lackm/go
 
     - name: Test Go
       working-directory: ./My_TodoList/app
       run: go test -v
+      env:
+        GOPATH: /home/runner/work/Lackm/go
