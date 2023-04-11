@@ -16,3 +16,33 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.20
+    - name: Install dependencies
+      working-directory: ./My_TodoList/app
+      run : |
+        go version
+        go get .
+        go get -u github.com/dlgusrb3456/get_UUID
+        go get -u github.com/gorilla/mux
+        go get -u github.com/gorilla/sessions
+        go get -u github.com/unrolled/render
+        go get -u github.com/urfave/negroni
+        go get -u go_WEB/My_TodoList/model
+        go get -u golang.org/x/oauth2
+        go get -u golang.org/x/oauth2/google
+      env:
+        GOPATH: /home/runner/work/Lackm/go
+
+    - name: Test Go
+      working-directory: ./My_TodoList/app
+      run: go test -v
+      env:
+        GOPATH: /home/runner/work/Lackm/go
