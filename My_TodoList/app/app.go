@@ -10,11 +10,11 @@ import (
 	"strings"
 
 	"github.com/dlgusrb3456/get_UUID"
+	"github.com/urfave/negroni"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/unrolled/render"
-	"github.com/urfave/negroni"
 )
 
 var rd *render.Render = render.New()

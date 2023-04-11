@@ -38,6 +38,5 @@ func logger2(w http.ResponseWriter, r *http.Request, h http.Handler) { //Decorag
 // }
 
 func main() {
-
 	http.ListenAndServe(":3000", NewHandler())
 }

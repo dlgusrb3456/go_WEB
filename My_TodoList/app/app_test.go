@@ -14,6 +14,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	DB_USER     = "postgres"
+	DB_PASSWORD = "?sr06468sr"
+	DB_NAME     = "todo_1"
+)
+
 func TestTodos(t *testing.T) {
 	//로그인이 된 후에 다음 테스트 코드가 수행되므로 로그인을 수행해야함.
 	//로그인이 됐는지 여부를 확인하는 app.go의 getSessionId()를 func()포인터를 가지는 variable로 만들어서 문제를 해결한다.
@@ -21,10 +27,11 @@ func TestTodos(t *testing.T) {
 		return "testsessionId"
 	}
 	// function variable이기 때문에 값을 변경할 수 있음
-
+	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
+		DB_USER, DB_PASSWORD, DB_NAME)
 	os.Remove("./test.db")
 	assert := assert.New(t)
-	ah := NewRouter("./test.db")
+	ah := NewRouter(dbinfo)
 	defer ah.Close()
 
 	ts := httptest.NewServer(ah)
